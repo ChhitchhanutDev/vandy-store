@@ -1,0 +1,1 @@
+import{o as a,c as o,y as s,q as d}from"./index-DvfYdtVt.js";const p={__name:"Card",props:{padding:{type:String,default:"p-6"}},setup(e){return(r,t)=>(a(),o("div",{class:d(["bg-white rounded-[20px] shadow-sm border border-border/50",e.padding])},[s(r.$slots,"default")],2))}};export{p as _};

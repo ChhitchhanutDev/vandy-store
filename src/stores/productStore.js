@@ -9,10 +9,14 @@ export const useProductStore = defineStore('product', () => {
     const currentProduct = ref(null)
     const loading = ref(false)
     const pagination = ref(null)
+    const selectedCategory = ref(null)
 
     async function fetchProducts(params = {}) {
         loading.value = true
         try {
+            if (selectedCategory.value) {
+                params.category_id = selectedCategory.value
+            }
             const res = await productApi.getProducts(params)
             if (res.success) {
                 products.value = res.data.data
@@ -42,7 +46,25 @@ export const useProductStore = defineStore('product', () => {
     async function searchProducts(q) {
         loading.value = true
         try {
-            const res = await productApi.searchProducts(q)
+            const extra = selectedCategory.value ? { category_id: selectedCategory.value } : {}
+            const res = await productApi.searchProducts(q, extra)
+            if (res.success) {
+                products.value = res.data.data
+                pagination.value = {
+                    currentPage: res.data.current_page,
+                    lastPage: res.data.last_page,
+                    total: res.data.total,
+                }
+            }
+        } finally {
+            loading.value = false
+        }
+    }
+
+    async function fetchCategoryProducts(categoryId, params = {}) {
+        loading.value = true
+        try {
+            const res = await categoryApi.getCategoryProducts(categoryId, params)
             if (res.success) {
                 products.value = res.data.data
                 pagination.value = {
@@ -69,9 +91,11 @@ export const useProductStore = defineStore('product', () => {
         currentProduct,
         loading,
         pagination,
+        selectedCategory,
         fetchProducts,
         fetchProduct,
         searchProducts,
+        fetchCategoryProducts,
         fetchCategories,
     }
 })
