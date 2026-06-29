@@ -1,112 +1,186 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { useProductStore } from '@/stores/productStore.js'
 import { useRoute, useRouter } from 'vue-router'
+import { useProductStore } from '@/stores/productStore.js'
 import MainLayout from '@/layouts/MainLayout.vue'
 import SearchBar from '@/components/product/SearchBar.vue'
 import ProductGrid from '@/components/product/ProductGrid.vue'
 import Pagination from '@/components/shared/Pagination.vue'
 import LoadingSkeleton from '@/components/shared/LoadingSkeleton.vue'
+import ErrorMessage from '@/components/shared/ErrorMessage.vue'
 
 const product = useProductStore()
 const route = useRoute()
 const router = useRouter()
 
+// State management
 const search = ref(route.query.q || '')
 const page = ref(Number(route.query.page) || 1)
-const activeCategory = ref(null)
+const activeCategory = ref(route.query.category ? Number(route.query.category) : null)
+const error = ref(false)
 
-function selectCategory(catId) {
-    if (activeCategory.value === catId) {
-        activeCategory.value = null
-    } else {
-        activeCategory.value = catId
-    }
-    product.selectedCategory = activeCategory.value
-    page.value = 1
-    load()
-}
-
-async function load() {
-    if (activeCategory.value) {
-        const params = { page: page.value }
-        if (search.value) params.q = search.value
-        await product.fetchCategoryProducts(activeCategory.value, params)
-    } else if (search.value) {
-        await product.searchProducts(search.value)
-    } else {
-        await product.fetchProducts({ page: page.value })
-    }
-}
-
+// Lifecycle Hooks
 onMounted(async () => {
     await product.fetchCategories()
     await load()
 })
 
+// Watchers
+watch(() => route.query.q, (val) => {
+    search.value = val || ''
+    page.value = 1
+    router.replace({
+        query: {
+            q: search.value || undefined,
+            category: activeCategory.value || undefined,
+            page: undefined,
+        },
+    })
+    load()
+})
+
+watch(() => route.query.category, (val) => {
+    activeCategory.value = val ? Number(val) : null
+    product.selectedCategory = activeCategory.value
+    page.value = 1
+    load()
+})
+
+// Actions & Methods
+async function load() {
+    error.value = false
+    try {
+        if (activeCategory.value) {
+            const params = { page: page.value }
+            if (search.value) params.q = search.value
+            await product.fetchCategoryProducts(activeCategory.value, params)
+        } else if (search.value) {
+            await product.searchProducts(search.value, { page: page.value })
+        } else {
+            await product.fetchProducts({ page: page.value })
+        }
+    } catch {
+        error.value = true
+    }
+}
+
+function selectCategory(catId) {
+    activeCategory.value = activeCategory.value === catId ? null : catId
+    product.selectedCategory = activeCategory.value
+    page.value = 1
+    router.replace({
+        query: { ...route.query, category: activeCategory.value || undefined, page: undefined }
+    })
+    load()
+}
+
 function doSearch() {
     page.value = 1
-    router.replace({ query: { q: search.value || undefined, page: undefined } })
+    router.replace({
+        query: {
+            q: search.value || undefined,
+            category: activeCategory.value || undefined,
+            page: undefined,
+        },
+    })
     load()
 }
 
 function goToPage(p) {
     page.value = p
-    router.replace({ query: { ...route.query, page: p } })
+    router.replace({
+        query: {
+            ...route.query,
+            page: p,
+            q: search.value || undefined,
+        },
+    })
     load()
     window.scrollTo({ top: 0, behavior: 'smooth' })
 }
-
-watch(() => route.query.q, (val) => {
-    if (!val) {
-        search.value = ''
-        page.value = 1
-        product.fetchProducts({ page: 1 })
-    }
-})
 </script>
 
 <template>
     <MainLayout>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 class="text-3xl font-bold text-text mb-6">Products</h1>
-
-            <div v-if="product.categories.length" class="flex flex-wrap gap-3 mb-6">
-                <button
-                    v-for="cat in product.categories"
-                    :key="cat.id"
-                    @click="selectCategory(cat.id)"
-                    class="flex items-center gap-2 px-4 py-2 rounded-[14px] border text-sm font-medium transition-all duration-200"
-                    :class="activeCategory === cat.id
-                        ? 'bg-primary text-white border-primary'
-                        : 'bg-white text-text border-border hover:border-primary hover:text-primary'"
-                >
-                    <img
-                        v-if="cat.image_url"
-                        :src="cat.image_url"
-                        :alt="cat.name"
-                        class="h-6 w-6 rounded-full object-cover"
-                    />
-                    {{ cat.name }}
-                </button>
+        <!-- HERO SECTION -->
+        <section class="overflow-hidden bg-[#5A3E36] mb-10">
+            <div class="max-w-7xl mx-auto px-8 py-20 text-center">
+                <p class="uppercase tracking-[0.3em] text-white/70 text-sm mb-4">
+                    Explore Collection
+                </p>
+                <h1 class="text-5xl font-bold text-white mb-5">
+                    Find Your Perfect Bag
+                </h1>
+                <p class="text-white/80 max-w-2xl mx-auto">
+                    Timeless designs crafted for everyday elegance.
+                </p>
             </div>
+        </section>
 
-            <div class="flex flex-col sm:flex-row gap-4 mb-8">
-                <div class="flex-1">
-                    <SearchBar v-model="search" placeholder="Search by name or description..." @search="doSearch" />
+        <!-- MAIN CONTENT CONTAINER -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
+
+            <!-- FILTER & SEARCH BAR -->
+            <div class="bg-white rounded-[30px] p-6 shadow-sm border border-[#F2E8E1] mb-10">
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex-1">
+                        <SearchBar v-model="search" placeholder="Search your dream bag..." @search="doSearch" />
+                    </div>
+                </div>
+
+                <!-- CATEGORIES -->
+                <div v-if="product.categories.length" class="mt-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-text">Browse Categories</h2>
+                        <span class="text-muted text-sm">{{ product.categories.length }} categories</span>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3">
+                        <button v-for="cat in product.categories" :key="cat.id" @click="selectCategory(cat.id)"
+                            class="group flex items-center gap-3 px-5 py-3 rounded-full transition-all duration-300 border"
+                            :class="activeCategory === cat.id
+                                ? 'bg-primary text-white border-primary shadow-lg'
+                                : 'bg-[#F8F3EF] border-transparent hover:bg-white hover:border-primary hover:shadow-md'">
+                            <img v-if="cat.image_url" :src="cat.image_url" :alt="cat.name"
+                                class="w-8 h-8 rounded-full object-cover group-hover:scale-110 transition" />
+                            <span class="font-medium">{{ cat.name }}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CATEGORIES SKELETON LOADER -->
+                <div v-else class="mt-8 flex gap-3">
+                    <div v-for="i in 4" :key="i" class="skeleton h-10 w-28 rounded-full" />
                 </div>
             </div>
 
-            <LoadingSkeleton v-if="product.loading" type="card" :count="8" />
-            <template v-else>
-                <ProductGrid :products="product.products" />
-                <Pagination
-                    v-if="product.pagination"
-                    :current-page="product.pagination.currentPage"
-                    :last-page="product.pagination.lastPage"
-                    @page="goToPage"
-                />
+            <!-- ERROR STATE -->
+            <ErrorMessage v-if="error" message="Failed to load products. Please try again." @retry="load"
+                class="mt-6" />
+
+            <!-- PRODUCTS COLLECTION -->
+            <template v-if="!error">
+                <div class="mb-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">Featured Collection</h2>
+                        <p class="text-muted">{{ product.products.length }} items</p>
+                    </div>
+                </div>
+
+                <LoadingSkeleton v-if="product.loading" type="card" :count="8" />
+
+                <template v-else>
+                    <div class="min-h-[400px]">
+                        <ProductGrid :products="product.products" />
+                    </div>
+
+                    <div class="mt-16">
+                        <Pagination v-if="product.pagination" :current-page="product.pagination.currentPage"
+                            :last-page="product.pagination.lastPage" @page="goToPage" />
+                    </div>
+                </template>
             </template>
+
         </div>
     </MainLayout>
 </template>
