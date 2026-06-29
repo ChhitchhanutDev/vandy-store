@@ -57,7 +57,9 @@ async function remove() {
             <span class="w-8 text-center text-sm font-medium">{{ item.quantity }}</span>
             <button
                 @click="updateQty(item.quantity + 1)"
-                class="h-8 w-8 flex items-center justify-center rounded-[10px] border border-border text-text hover:bg-secondary transition-colors"
+                :disabled="item.quantity >= (item.product?.stock || 0)"
+                class="h-8 w-8 flex items-center justify-center rounded-[10px] border border-border text-text transition-colors"
+                :class="item.quantity >= (item.product?.stock || 0) ? 'opacity-30 cursor-not-allowed' : 'hover:bg-secondary'"
             >
                 +
             </button>

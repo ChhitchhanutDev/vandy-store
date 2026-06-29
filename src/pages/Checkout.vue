@@ -13,6 +13,7 @@ const toast = useToast()
 const router = useRouter()
 
 const address = ref('')
+const phone = ref('')
 const loading = ref(false)
 const error = ref('')
 
@@ -26,10 +27,14 @@ async function placeOrder() {
         error.value = 'Shipping address is required'
         return
     }
+    if (!phone.value.trim()) {
+        error.value = 'Phone number is required'
+        return
+    }
     loading.value = true
     error.value = ''
     try {
-        await orderApi.checkout({ shipping_address: address.value })
+        await orderApi.checkout({ shipping_address: address.value, phone_number: phone.value })
         cart.clearLocal()
         toast.success('Order placed successfully!')
         router.push('/orders')
@@ -55,6 +60,13 @@ async function placeOrder() {
                             v-model="address"
                             label="Full Address"
                             placeholder="123 Main St, City, Country"
+                            required
+                        />
+                        <Input
+                            v-model="phone"
+                            label="Phone Number"
+                            type="tel"
+                            placeholder="+1 234 567 8900"
                             required
                         />
                     </div>

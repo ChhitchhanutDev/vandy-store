@@ -79,13 +79,13 @@ async function addToCart() {
 
             <button
                 @click="addToCart"
-                :disabled="!product.status"
+                :disabled="!product.status || !product.stock"
                 class="mt-3 w-full py-2.5 text-sm font-medium rounded-[14px] transition-all duration-200"
-                :class="product.status
+                :class="product.status && product.stock
                     ? 'bg-primary text-white hover:bg-primary-dark'
                     : 'bg-slate-100 text-slate-400 cursor-not-allowed'"
             >
-                {{ product.status ? 'Add to Cart' : 'Unavailable' }}
+                {{ product.status && product.stock ? 'Add to Cart' : product.stock === 0 ? 'Out of Stock' : 'Unavailable' }}
             </button>
         </div>
     </div>
