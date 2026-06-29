@@ -1,1 +1,0 @@
-import{b as a,h as s,y as o,q as d}from"./index-BFwQZKS_.js";const p={__name:"Card",props:{padding:{type:String,default:"p-6"}},setup(e){return(r,t)=>(a(),s("div",{class:d(["bg-white rounded-[20px] shadow-sm border border-border/50",e.padding])},[o(r.$slots,"default")],2))}};export{p as _};
