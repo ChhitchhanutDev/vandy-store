@@ -42,6 +42,11 @@ body {
     50% { transform: translateY(-16px); }
 }
 
+@keyframes shimmer {
+    0% { transform: translateX(-100%) rotate(25deg); }
+    100% { transform: translateX(200%) rotate(25deg); }
+}
+
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.25s ease;

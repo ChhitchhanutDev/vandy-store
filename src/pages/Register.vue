@@ -44,24 +44,45 @@ async function submit() {
 </script>
 
 <template>
+    <!-- bg-gradient-to-br from-[#F9F5F2] via-[#F4ECE5] to-[#E4D0C0] px-6 py-10 -->
     <AuthLayout>
-        <Card>
-            <h1 class="text-2xl font-bold text-text text-center mb-1">Create Account</h1>
-            <p class="text-sm text-muted text-center mb-6">Join Vandy's Store today</p>
+        <Card
+            class="w-[500px] rounded-[36px] bg-white/80 backdrop-blur-md border border-white/40 shadow-[0_20px_60px_rgba(138,93,79,0.15)] p-10">
 
-            <form @submit.prevent="submit" class="space-y-4">
-                <Input v-model="name" label="Full Name" placeholder="John Doe" :error="errors.name?.[0]" required />
-                <Input v-model="email" label="Email" type="email" placeholder="you@example.com" :error="errors.email?.[0]" required />
-                <Input v-model="password" label="Password" type="password" placeholder="Min 8 characters" :error="errors.password?.[0]" required />
-                <Input v-model="passwordConfirmation" label="Confirm Password" type="password" placeholder="Confirm your password" required />
+                <div class="text-center mb-8">
+                    <p class="uppercase tracking-[0.3em] text-primary text-xs mb-3">Join The Collection</p>
+                    <h1 class="text-4xl font-bold text-text mb-3">Create Account</h1>
+                    <p class="text-muted">Become part of Vandy's Store</p>
+                </div>
 
-                <Button type="submit" :loading="loading" class="w-full">Create Account</Button>
-            </form>
+                <form @submit.prevent="submit" class="space-y-5">
+                    <Input v-model="name" label="Full Name" placeholder="John Doe" :error="errors.name?.[0]" required />
 
-            <p class="mt-6 text-center text-sm text-muted">
-                Already have an account?
-                <router-link to="/login" class="font-medium text-primary hover:text-primary-dark transition-colors">Sign In</router-link>
-            </p>
+                    <Input v-model="email" label="Email" type="email" placeholder="you@example.com"
+                        :error="errors.email?.[0]" required />
+
+                    <Input v-model="password" label="Password" type="password" placeholder="Minimum 8 characters"
+                        :error="errors.password?.[0]" required />
+
+                    <Input v-model="passwordConfirmation" label="Confirm Password" type="password"
+                        placeholder="Confirm your password" required />
+
+                    <Button type="submit" :loading="loading"
+                        class="w-full h-14 rounded-full bg-gradient-to-r from-[#8A5D4F] to-[#B88A6D] text-white font-semibold shadow-lg shadow-[#8A5D4F]/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#8A5D4F]/30 transition-all duration-300">
+                        Create Account
+                    </Button>
+                </form>
+
+                <div class="mt-8 flex gap-2 justify-center">
+                    <p class="text-sm text-muted">Already have an account?</p>
+                    <router-link to="/login" class="text-sm">
+                        Sign In
+                    </router-link>
+                </div>
+
+                <div
+                    class="absolute top-0 right-0 w-48 h-48 bg-[#E8D6C7] blur-[100px] opacity-30 pointer-events-none" />
+
         </Card>
     </AuthLayout>
 </template>

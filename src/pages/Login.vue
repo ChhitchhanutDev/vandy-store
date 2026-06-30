@@ -35,23 +35,37 @@ async function submit() {
 
 <template>
     <AuthLayout>
-        <Card>
-            <h1 class="text-2xl font-bold text-text text-center mb-1">Welcome Back</h1>
-            <p class="text-sm text-muted text-center mb-6">Sign in to your account</p>
+        <Card
+            class="w-[500px] rounded-[36px] bg-white/80 backdrop-blur-md border border-white/40 shadow-[0_20px_60px_rgba(138,93,79,0.15)] p-10">
 
-            <form @submit.prevent="submit" class="space-y-4">
-                <div v-if="error" class="text-sm text-error bg-red-50 px-4 py-3 rounded-[14px]">{{ error }}</div>
+                <div class="text-center mb-8">
+                    <p class="uppercase tracking-[0.3em] text-primary text-xs mb-3">Welcome Back</p>
+                    <h1 class="text-4xl font-bold text-text mb-3">Sign In</h1>
+                    <p class="text-muted">Continue your premium shopping journey</p>
+                </div>
 
-                <Input v-model="email" label="Email" type="email" placeholder="you@example.com" required />
-                <Input v-model="password" label="Password" type="password" placeholder="Enter your password" required />
+                <form @submit.prevent="submit" class="space-y-5">
+                    <div v-if="error" class="rounded-[20px] bg-red-50 text-red-600 px-5 py-4">
+                        {{ error }}
+                    </div>
 
-                <Button type="submit" :loading="loading" class="w-full">Sign In</Button>
-            </form>
+                    <Input v-model="email" label="Email" type="email" placeholder="you@example.com" required />
 
-            <p class="mt-6 text-center text-sm text-muted">
-                Don't have an account?
-                <router-link to="/register" class="font-medium text-primary hover:text-primary-dark transition-colors">Register</router-link>
-            </p>
+                    <Input v-model="password" label="Password" type="password" placeholder="Enter password" required />
+
+                    <Button type="submit" :loading="loading"
+                        class="w-full h-14 rounded-full bg-gradient-to-r from-[#8A5D4F] to-[#B88A6D] text-white font-semibold shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                        Sign In
+                    </Button>
+                </form>
+
+                <div class="mt-8 flex gap-2 justify-center">
+                    <p class="text-sm text-muted">Don't have an account?</p>
+                    <router-link to="/register" class="text-sm">
+                        Create Account
+                    </router-link>
+                </div>
+
         </Card>
     </AuthLayout>
 </template>
