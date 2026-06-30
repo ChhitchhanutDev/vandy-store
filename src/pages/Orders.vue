@@ -32,32 +32,52 @@ onMounted(() => fetchOrders())
 
 <template>
     <MainLayout>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 class="text-3xl font-bold text-text mb-8">My Orders</h1>
+        <div class="min-h-screen bg-gradient-to-b from-[#F9F5F2] to-white py-10">
+            <div class="max-w-7xl mx-auto px-6">
 
-            <Spinner v-if="loading" />
+                <section
+                    class="mb-10 rounded-[36px] overflow-hidden bg-gradient-to-r from-primary to-[#B88A6D] text-white">
+                    <div class="px-10 py-16">
+                        <p class="uppercase tracking-[0.25em] text-white/70 text-sm mb-3">Order History</p>
+                        <h1 class="text-5xl font-bold mb-4">My Orders</h1>
+                        <p class="max-w-xl text-white/80">Track and review your purchases anytime.</p>
+                    </div>
+                </section>
 
-            <template v-else-if="orders.length">
-                <div class="grid gap-4 max-w-2xl">
-                    <OrderCard v-for="order in orders" :key="order.id" :order="order" />
+                <div v-if="loading" class="rounded-[32px] bg-white shadow-md p-8">
+                    <Spinner />
                 </div>
-                <Pagination
-                    v-if="pagination"
-                    :current-page="pagination.currentPage"
-                    :last-page="pagination.lastPage"
-                    @page="fetchOrders"
-                />
-            </template>
 
-            <EmptyState
-                v-else
-                title="No orders yet"
-                description="Place your first order to see it here."
-            >
-                <router-link to="/products" class="mt-4">
-                    <ui-button>Start Shopping</ui-button>
-                </router-link>
-            </EmptyState>
+                <template v-else-if="orders.length">
+                    <div class="rounded-[32px] bg-white border border-[#EFE6DF] shadow-lg overflow-hidden pb-12">
+                        <div class="px-8 py-6">
+                            <h2 class="text-2xl font-semibold text-text">Recent Orders</h2>
+                            <p class="text-muted mt-1">You have {{ orders.length }} order(s)</p>
+                        </div>
+
+                        <div class="px-6">
+                            <div class="grid gap-5">
+                                <OrderCard v-for="order in orders" :key="order.id" :order="order" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 flex justify-center">
+                        <Pagination v-if="pagination" :current-page="pagination.currentPage"
+                            :last-page="pagination.lastPage" @page="fetchOrders" />
+                    </div>
+                </template>
+
+                <EmptyState v-else title="No orders yet" description="Start shopping and your orders will appear here."
+                    class="rounded-[32px] bg-white shadow-md p-12">
+                    <router-link to="/products">
+                        <ui-button class="mt-6 rounded-full px-8 bg-primary hover:bg-primary-dark">
+                            Start Shopping
+                        </ui-button>
+                    </router-link>
+                </EmptyState>
+
+            </div>
         </div>
     </MainLayout>
 </template>

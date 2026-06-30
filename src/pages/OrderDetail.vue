@@ -65,6 +65,11 @@ onMounted(async () => {
                         </Card>
 
                         <Card>
+                            <h3 class="text-sm font-semibold text-text mb-2">Customer Contact</h3>
+                            <p class="text-sm text-muted">{{ order.phone_number }}</p>
+                        </Card>
+
+                        <Card>
                             <h3 class="text-sm font-semibold text-text mb-2">Order Date</h3>
                             <p class="text-sm text-muted">{{ new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</p>
                         </Card>
