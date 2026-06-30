@@ -10,11 +10,15 @@ import Spinner from '@/components/ui/Spinner.vue'
 const route = useRoute()
 const order = ref(null)
 const loading = ref(true)
+const error = ref(null)
 
 onMounted(async () => {
     try {
         const res = await orderApi.getOrder(route.params.id)
         if (res.success) order.value = res.data
+        else error.value = 'Order not found'
+    } catch (e) {
+        error.value = e.response?.data?.message || 'Failed to load order'
     } finally {
         loading.value = false
     }
@@ -25,6 +29,11 @@ onMounted(async () => {
     <MainLayout>
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <Spinner v-if="loading" />
+
+            <div v-else-if="error" class="py-20 text-center">
+                <p class="text-lg font-semibold text-error mb-2">{{ error }}</p>
+                <router-link to="/orders" class="text-sm text-primary hover:underline">Back to Orders</router-link>
+            </div>
 
             <template v-else-if="order">
                 <router-link to="/orders" class="text-sm text-primary hover:text-primary-dark transition-colors mb-4 inline-block">&larr; Back to Orders</router-link>

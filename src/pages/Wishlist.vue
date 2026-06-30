@@ -50,11 +50,9 @@ onMounted(() => wishlist.fetchWishlist())
                         <p class="text-muted max-w-md mx-auto mb-8">
                             Save products you love and they’ll appear here for later.
                         </p>
-                        <router-link to="/products">
-                            <ui-button class="rounded-full px-8 bg-primary hover:bg-primary-dark">
-                                Explore Collection
-                            </ui-button>
-                        </router-link>
+                        <ui-button to="/products" class="rounded-full px-8 bg-primary hover:bg-primary-dark">
+                            Explore Collection
+                        </ui-button>
                     </div>
                 </template>
 

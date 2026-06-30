@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/productStore.js'
 import MainLayout from '@/layouts/MainLayout.vue'
@@ -13,40 +13,16 @@ const product = useProductStore()
 const route = useRoute()
 const router = useRouter()
 
-// State management
 const search = ref(route.query.q || '')
 const page = ref(Number(route.query.page) || 1)
 const activeCategory = ref(route.query.category ? Number(route.query.category) : null)
 const error = ref(false)
 
-// Lifecycle Hooks
 onMounted(async () => {
     await product.fetchCategories()
     await load()
 })
 
-// Watchers
-watch(() => route.query.q, (val) => {
-    search.value = val || ''
-    page.value = 1
-    router.replace({
-        query: {
-            q: search.value || undefined,
-            category: activeCategory.value || undefined,
-            page: undefined,
-        },
-    })
-    load()
-})
-
-watch(() => route.query.category, (val) => {
-    activeCategory.value = val ? Number(val) : null
-    product.selectedCategory = activeCategory.value
-    page.value = 1
-    load()
-})
-
-// Actions & Methods
 async function load() {
     error.value = false
     try {
@@ -64,37 +40,33 @@ async function load() {
     }
 }
 
+function syncRoute() {
+    router.replace({
+        query: {
+            q: search.value || undefined,
+            category: activeCategory.value || undefined,
+            page: page.value > 1 ? page.value : undefined,
+        },
+    })
+}
+
 function selectCategory(catId) {
     activeCategory.value = activeCategory.value === catId ? null : catId
     product.selectedCategory = activeCategory.value
     page.value = 1
-    router.replace({
-        query: { ...route.query, category: activeCategory.value || undefined, page: undefined }
-    })
+    syncRoute()
     load()
 }
 
 function doSearch() {
     page.value = 1
-    router.replace({
-        query: {
-            q: search.value || undefined,
-            category: activeCategory.value || undefined,
-            page: undefined,
-        },
-    })
+    syncRoute()
     load()
 }
 
 function goToPage(p) {
     page.value = p
-    router.replace({
-        query: {
-            ...route.query,
-            page: p,
-            q: search.value || undefined,
-        },
-    })
+    syncRoute()
     load()
     window.scrollTo({ top: 0, behavior: 'smooth' })
 }

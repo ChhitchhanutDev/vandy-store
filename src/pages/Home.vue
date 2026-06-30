@@ -40,9 +40,7 @@ onMounted(() => {
                     <p class="mt-6 text-white/80 text-lg max-w-lg">Premium handcrafted bags designed for everyday
                         elegance.</p>
                     <div class="mt-10 flex gap-4">
-                        <RouterLink to="/products">
-                            <ui-button size="lg" class="inline-flex items-center justify-center px-6 py-3 border border-white rounded-lg text-white hover:bg-white hover:text-primary transition">Shop Now</ui-button>
-                        </RouterLink>
+                        <ui-button to="/products" size="lg" class="inline-flex items-center justify-center px-6 py-3 border border-white rounded-lg text-white hover:bg-white hover:text-primary transition">Shop Now</ui-button>
                     </div>
                     <div class="mt-10 flex gap-8">
                         <div>

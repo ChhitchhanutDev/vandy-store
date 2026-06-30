@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/authStore.js'
 import { useCartStore } from '@/stores/cartStore.js'
 import { useWishlistStore } from '@/stores/wishlistStore.js'
@@ -17,7 +17,7 @@ const wishlist = useWishlistStore()
 const toast = useToast()
 const router = useRouter()
 
-const inWishlist = wishlist.isInWishlist(props.product.id)
+const inWishlist = computed(() => wishlist.isInWishlist(props.product.id))
 const showDetail = ref(false)
 
 async function toggleWishlist() {

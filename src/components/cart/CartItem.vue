@@ -13,7 +13,7 @@ const toast = useToast()
 
 const qtyInput = ref(props.item.quantity)
 const maxStock = computed(() => props.item.product?.stock ?? 99)
-let debounceTimer = null
+const debounceTimer = ref(null)
 
 function clamp(val) {
     return Math.min(Math.max(parseInt(val) || 1, 1), maxStock.value)
@@ -31,16 +31,16 @@ async function updateQty(qty) {
 }
 
 function onQtyInput() {
-    clearTimeout(debounceTimer)
+    clearTimeout(debounceTimer.value)
     const val = clamp(qtyInput.value)
     qtyInput.value = val
-    debounceTimer = setTimeout(() => {
+    debounceTimer.value = setTimeout(() => {
         if (val !== props.item.quantity) updateQty(val)
     }, 300)
 }
 
 function onQtyBlur() {
-    clearTimeout(debounceTimer)
+    clearTimeout(debounceTimer.value)
     const val = clamp(qtyInput.value)
     qtyInput.value = val
     if (val !== props.item.quantity) updateQty(val)

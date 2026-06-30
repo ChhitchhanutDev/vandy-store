@@ -68,7 +68,11 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     async function updatePassword(data) {
-        return authApi.updatePassword(data)
+        const res = await authApi.updatePassword(data)
+        if (!res.success) {
+            throw { response: { data: res } }
+        }
+        return res
     }
 
     return {

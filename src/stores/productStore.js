@@ -79,9 +79,13 @@ export const useProductStore = defineStore('product', () => {
     }
 
     async function fetchCategories() {
-        const res = await categoryApi.getCategories()
-        if (res.success) {
-            categories.value = res.data.data || res.data
+        try {
+            const res = await categoryApi.getCategories()
+            if (res.success) {
+                categories.value = res.data.data || res.data
+            }
+        } catch {
+            categories.value = []
         }
     }
 
