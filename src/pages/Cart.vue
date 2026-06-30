@@ -8,12 +8,15 @@ import CartItem from '@/components/cart/CartItem.vue'
 import CartSummary from '@/components/cart/CartSummary.vue'
 import EmptyState from '@/components/shared/EmptyState.vue'
 import LoadingSkeleton from '@/components/shared/LoadingSkeleton.vue'
+import Modal from '@/components/ui/Modal.vue'
+import ReviewForm from '@/components/review/ReviewForm.vue'
 
 const cart = useCartStore()
 const toast = useToast()
 
 const purchases = ref([])
 const purchasesLoading = ref(false)
+const reviewProductId = ref(null)
 
 onMounted(() => {
     cart.fetchCart()
@@ -39,6 +42,11 @@ async function buyAgain(productId) {
     } catch (e) {
         toast.error(e.response?.data?.message || 'Failed to add to cart')
     }
+}
+
+function onReviewSubmitted() {
+    reviewProductId.value = null
+    toast.success('Review submitted')
 }
 </script>
 
@@ -132,17 +140,28 @@ async function buyAgain(productId) {
                                         Purchased {{ p.total_quantity }} time{{ p.total_quantity > 1 ? 's' : '' }}
                                     </p>
 
-                                    <button @click="buyAgain(p.product.id)" :disabled="!p.product.status"
-                                        class="mt-5 px-5 py-3 rounded-full text-sm font-medium transition"
-                                        :class="p.product.status ? 'bg-primary text-white hover:scale-105' : 'bg-gray-100 text-gray-400'">
-                                        {{ p.product.status ? 'Buy Again' : 'Unavailable' }}
-                                    </button>
+                                    <div class="flex gap-2 mt-4">
+                                        <button @click="buyAgain(p.product.id)" :disabled="!p.product.status"
+                                            class="px-2 py-1 rounded-full text-sm font-medium transition"
+                                            :class="p.product.status ? 'bg-primary text-white hover:scale-105' : 'bg-gray-100 text-gray-400'">
+                                            {{ p.product.status ? 'Buy Again' : 'Unavailable' }}
+                                        </button>
+
+                                        <button @click="reviewProductId = p.product.id"
+                                            class="px-2 py-1 rounded-full text-sm font-medium transition border border-primary text-primary hover:bg-primary hover:text-white">
+                                            Review
+                                        </button>
+                                    </div>
                                 </div>
 
                             </div>
                         </div>
                     </div>
                 </section>
+
+                <Modal :show="!!reviewProductId" title="Write a Review" @close="reviewProductId = null">
+                    <ReviewForm v-if="reviewProductId" :productId="reviewProductId" @submitted="onReviewSubmitted" />
+                </Modal>
 
             </div>
         </div>

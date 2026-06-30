@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/productStore.js'
@@ -96,7 +96,7 @@ async function addToCart() {
 
                         <div class="flex gap-3">
                             <ui-button :loading="adding" @click="addToCart" size="lg" class="flex-1">
-                                Add to Cart — ${{ (product.currentProduct.price * qty).toFixed(2) }}
+                                Add to Cart ÔÇö ${{ (product.currentProduct.price * qty).toFixed(2) }}
                             </ui-button>
                             <ui-button variant="outline" size="lg" @click="toggleWishlist">
                                 <svg class="h-5 w-5" :class="inWishlist() ? 'fill-error text-error' : ''" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
