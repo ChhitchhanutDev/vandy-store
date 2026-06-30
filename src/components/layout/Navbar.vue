@@ -90,10 +90,10 @@ function closeMobile() {
 
                     <template v-else>
                         <RouterLink to="/login">
-                            <ui-button variant="ghost" size="sm">Login</ui-button>
+                            <ui-button variant="ghost" size="sm" class="h-15 px-5 py-2 rounded-[14px] text-sm font-medium text-text hover:text-primary hover:bg-secondary/50 transition-all duration-200">Login</ui-button>
                         </RouterLink>
                         <RouterLink to="/register">
-                            <ui-button variant="primary" size="sm">Register</ui-button>
+                            <ui-button variant="primary" size="sm" class="h-15 px-5 py-2 rounded-[14px] text-sm font-medium bg-primary text-white hover:opacity-90 transition-all duration-200">Register</ui-button>
                         </RouterLink>
                     </template>
                 </div>

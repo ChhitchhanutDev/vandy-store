@@ -62,14 +62,14 @@ async function buyAgain(productId) {
 
                 <!-- CART CONTENT -->
                 <div v-else-if="cart.items.length" class="grid gap-8 lg:grid-cols-[1.6fr_0.8fr]">
-
                     <!-- ITEMS LIST -->
                     <div>
                         <div class="rounded-[32px] bg-white shadow-lg border border-[#EFE6DF] overflow-hidden">
-                            <div class="px-8 py-6 border-b">
+                            <div class="px-8 py-6">
                                 <h2 class="text-2xl font-semibold">Cart Items</h2>
                                 <p class="text-muted mt-1">{{ cart.itemCount }} items selected</p>
                             </div>
+                            <hr class="border-border ml-8 mr-8" />
                             <div class="p-6">
                                 <CartItem v-for="item in cart.items" :key="item.id" :item="item" />
                             </div>
@@ -80,32 +80,24 @@ async function buyAgain(productId) {
                     <div>
                         <div class="sticky top-24">
                             <CartSummary :total="cart.total" :item-count="cart.itemCount"
-                                class="rounded-[32px] shadow-lg border-0">
-                                <router-link to="/checkout">
-                                    <ui-button class="w-full mt-6 !rounded-full">Proceed to Checkout</ui-button>
-                                    <ui-button
-                                        class="w-full mt-6 h-14 rounded-full bg-gradient-to-r from-[#8A5D4F] to-[#B88A6D] text-white font-semibold text-base shadow-lg shadow-[#8A5D4F]/25 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#8A5D4F]/35 active:translate-y-0 transition-all duration-300 group">
-                                        <span class="flex items-center justify-center gap-3">
-                                            Proceed to Checkout
-                                            <span
-                                                class="text-lg transition-transform group-hover:translate-x-1">→</span>
-                                        </span>
-                                    </ui-button>
-
+                                class="rounded-[32px] bg-white shadow-lg">
+                                <router-link to="/checkout"
+                                    class="inline-flex items-center justify-center w-full mt-6 h-14 rounded-full bg-gradient-to-r from-accent-orange to-primary-dark text-white font-semibold text-[15px] shadow-lg shadow-accent-orange/25 hover:-translate-y-[2px] hover:shadow-xl hover:shadow-accent-orange/35 active:translate-y-0 active:scale-[0.99] transition-all duration-300 cursor-pointer">
+                                    <span class="flex items-center justify-center gap-2">
+                                        Proceed to Order
+                                        <span class="transition-transform group-hover:translate-x-1">→</span>
+                                    </span>
                                 </router-link>
                             </CartSummary>
                         </div>
                     </div>
-
                 </div>
 
                 <!-- EMPTY STATE -->
                 <EmptyState v-else title="Your cart feels lonely"
                     description="Explore our collection and find your next favorite bag."
                     class="rounded-[32px] bg-white shadow-md p-12">
-                    <router-link to="/products">
-                        <ui-button class="mt-6 !rounded-full">Browse Collection</ui-button>
-                    </router-link>
+                    <ui-button to="/products" class="mt-6 !rounded-full">Browse Collection</ui-button>
                 </EmptyState>
 
                 <!-- PURCHASE HISTORY -->

@@ -49,7 +49,13 @@ async function placeOrder() {
 <template>
     <MainLayout>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 class="text-3xl font-bold text-text mb-8">Checkout</h1>
+            <div class="flex items-center gap-4 mb-8">
+                <router-link to="/cart"
+                    class="inline-flex items-center justify-center h-10 w-10 rounded-full border border-border text-text hover:bg-secondary hover:border-primary transition-colors">
+                    <span class="text-lg">←</span>
+                </router-link>
+                <h1 class="text-3xl font-bold text-text">Checkout</h1>
+            </div>
 
             <div class="grid gap-8 lg:grid-cols-3">
                 <div class="lg:col-span-2 space-y-6">
@@ -91,9 +97,16 @@ async function placeOrder() {
 
                 <div>
                     <CartSummary :total="cart.total" :item-count="cart.itemCount">
-                        <ui-button :loading="loading" @click="placeOrder" class="w-full mt-4">
+                        <button
+                            @click="placeOrder"
+                            :disabled="loading"
+                            class="inline-flex items-center justify-center gap-2 w-full mt-4 px-7 py-3 rounded-[16px] bg-primary text-white font-medium hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer">
+                            <svg v-if="loading" class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
                             Place Order
-                        </ui-button>
+                        </button>
                     </CartSummary>
                 </div>
             </div>
