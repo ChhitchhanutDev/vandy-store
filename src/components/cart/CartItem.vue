@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { useCartStore } from '@/stores/cartStore.js'
 import { useToast } from '@/composables/useToast.js'
 import { RouterLink } from 'vue-router'
@@ -14,6 +14,12 @@ const toast = useToast()
 const qtyInput = ref(props.item.quantity)
 const maxStock = computed(() => props.item.product?.stock ?? 99)
 const debounceTimer = ref(null)
+
+watch(() => props.item.quantity, (val) => {
+    qtyInput.value = val
+})
+
+onBeforeUnmount(() => clearTimeout(debounceTimer.value))
 
 function clamp(val) {
     return Math.min(Math.max(parseInt(val) || 1, 1), maxStock.value)

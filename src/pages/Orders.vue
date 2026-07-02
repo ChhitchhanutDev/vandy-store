@@ -32,7 +32,7 @@ onMounted(() => fetchOrders())
 
 <template>
     <MainLayout>
-        <div class="min-h-screen bg-gradient-to-b from-[#F9F5F2] to-white py-10">
+        <div class="min-h-screen bg-page-gradient py-10">
             <div class="max-w-7xl mx-auto px-6">
 
                 <section

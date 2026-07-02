@@ -8,3 +8,6 @@ export const checkCanReview = (productId) =>
 
 export const submitReview = (productId, data) =>
     api.post(`/products/${productId}/reviews`, data)
+
+export const updateReview = (reviewId, data) =>
+    api.put(`/reviews/${reviewId}`, data)

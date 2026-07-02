@@ -11,7 +11,7 @@ export const useWishlistStore = defineStore('wishlist', () => {
         try {
             const res = await wishlistApi.getWishlist()
             if (res.success) {
-                items.value = res.data.data || res.data
+                items.value = res.data.data
             }
         } finally {
             loading.value = false

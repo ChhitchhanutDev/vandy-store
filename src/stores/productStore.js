@@ -82,7 +82,7 @@ export const useProductStore = defineStore('product', () => {
         try {
             const res = await categoryApi.getCategories()
             if (res.success) {
-                categories.value = res.data.data || res.data
+                categories.value = res.data.data
             }
         } catch {
             categories.value = []

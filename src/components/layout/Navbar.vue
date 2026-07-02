@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStore.js'
 import { useCartStore } from '@/stores/cartStore.js'
 import { useWishlistStore } from '@/stores/wishlistStore.js'
@@ -14,10 +14,12 @@ const router = useRouter()
 
 const mobileOpen = ref(false)
 
-if (auth.isAuthenticated) {
-    cart.fetchCart()
-    wishlist.fetchWishlist()
-}
+onMounted(() => {
+    if (auth.isAuthenticated) {
+        cart.fetchCart()
+        wishlist.fetchWishlist()
+    }
+})
 
 async function handleLogout() {
     await auth.logout()

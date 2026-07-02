@@ -10,7 +10,15 @@ function pages() {
     const p = []
     const start = Math.max(1, props.currentPage - 2)
     const end = Math.min(props.lastPage, props.currentPage + 2)
+    if (start > 1) {
+        p.push(1)
+        if (start > 2) p.push('...')
+    }
     for (let i = start; i <= end; i++) p.push(i)
+    if (end < props.lastPage) {
+        if (end < props.lastPage - 1) p.push('...')
+        p.push(props.lastPage)
+    }
     return p
 }
 </script>
@@ -25,17 +33,19 @@ function pages() {
             Prev
         </button>
 
-        <button
-            v-for="p in pages()"
-            :key="p"
-            @click="emit('page', p)"
-            :class="[
-                'px-3.5 py-2 text-sm font-medium rounded-[12px] transition-all duration-200',
-                p === currentPage ? 'bg-primary text-white' : 'text-text hover:bg-secondary',
-            ]"
-        >
-            {{ p }}
-        </button>
+        <template v-for="p in pages()" :key="p">
+            <span v-if="p === '...'" class="px-2 text-muted text-sm">...</span>
+            <button
+                v-else
+                @click="emit('page', p)"
+                :class="[
+                    'px-3.5 py-2 text-sm font-medium rounded-[12px] transition-all duration-200',
+                    p === currentPage ? 'bg-primary text-white' : 'text-text hover:bg-secondary',
+                ]"
+            >
+                {{ p }}
+            </button>
+        </template>
 
         <button
             :disabled="currentPage === lastPage"

@@ -65,3 +65,7 @@ body {
     opacity: 0;
     transform: translateY(12px);
 }
+
+.bg-page-gradient {
+    background: linear-gradient(to bottom, #F9F5F2, #ffffff);
+}

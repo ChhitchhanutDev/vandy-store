@@ -5,66 +5,73 @@ const routes = [
         path: '/',
         name: 'Home',
         component: () => import('@/pages/Home.vue'),
+        meta: { title: 'Home' },
     },
     {
         path: '/products',
         name: 'Products',
         component: () => import('@/pages/Products.vue'),
+        meta: { title: 'Products' },
     },
     {
         path: '/products/:id',
         name: 'ProductDetail',
         component: () => import('@/pages/ProductDetail.vue'),
+        meta: { title: 'Product Details' },
     },
     {
         path: '/login',
         name: 'Login',
         component: () => import('@/pages/Login.vue'),
+        meta: { title: 'Sign In' },
     },
     {
         path: '/register',
         name: 'Register',
         component: () => import('@/pages/Register.vue'),
+        meta: { title: 'Create Account' },
     },
     {
         path: '/wishlist',
         name: 'Wishlist',
         component: () => import('@/pages/Wishlist.vue'),
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, title: 'My Wishlist' },
     },
     {
         path: '/cart',
         name: 'Cart',
         component: () => import('@/pages/Cart.vue'),
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, title: 'Shopping Cart' },
     },
     {
         path: '/checkout',
         name: 'Checkout',
         component: () => import('@/pages/Checkout.vue'),
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, title: 'Checkout' },
     },
     {
         path: '/orders',
         name: 'Orders',
         component: () => import('@/pages/Orders.vue'),
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, title: 'My Orders' },
     },
     {
         path: '/orders/:id',
         name: 'OrderDetail',
         component: () => import('@/pages/OrderDetail.vue'),
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, title: 'Order Details' },
     },
     {
         path: '/profile',
         name: 'Profile',
         component: () => import('@/pages/Profile.vue'),
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, title: 'Profile Settings' },
     },
     {
         path: '/:pathMatch(.*)*',
-        redirect: '/',
+        name: 'NotFound',
+        component: () => import('@/pages/NotFound.vue'),
+        meta: { title: 'Page Not Found' },
     },
 ]
 
@@ -74,6 +81,10 @@ const router = createRouter({
     scrollBehavior() {
         return { top: 0 }
     },
+})
+
+router.afterEach((to) => {
+    document.title = to.meta?.title ? `${to.meta.title} | Vandy's Store` : "Vandy's Store"
 })
 
 router.beforeEach((to, from, next) => {

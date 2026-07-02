@@ -1,13 +1,17 @@
 ﻿<script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/productStore.js'
 import { useAuthStore } from '@/stores/authStore.js'
 import { useCartStore } from '@/stores/cartStore.js'
 import { useWishlistStore } from '@/stores/wishlistStore.js'
 import { useToast } from '@/composables/useToast.js'
+import { getProductReviews } from '@/api/review.api.js'
 import MainLayout from '@/layouts/MainLayout.vue'
 import LoadingSkeleton from '@/components/shared/LoadingSkeleton.vue'
+import ReviewList from '@/components/review/ReviewList.vue'
+import ReviewForm from '@/components/review/ReviewForm.vue'
+import Pagination from '@/components/shared/Pagination.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -19,10 +23,40 @@ const toast = useToast()
 
 const qty = ref(1)
 const adding = ref(false)
+const reviews = ref([])
+const reviewsLoading = ref(false)
+const reviewPagination = ref(null)
 
 onMounted(async () => {
     await product.fetchProduct(route.params.id)
 })
+
+watch(() => product.currentProduct?.id, (id) => {
+    if (id) fetchReviews()
+})
+
+async function fetchReviews(page = 1) {
+    if (!product.currentProduct?.id) return
+    reviewsLoading.value = true
+    try {
+        const res = await getProductReviews(product.currentProduct.id, { page })
+        if (res.success) {
+            reviews.value = res.data.data
+            reviewPagination.value = {
+                currentPage: res.data.current_page,
+                lastPage: res.data.last_page,
+                total: res.data.total,
+            }
+        }
+    } finally {
+        reviewsLoading.value = false
+    }
+}
+
+function onReviewSubmitted() {
+    toast.success('Review submitted')
+    fetchReviews()
+}
 
 const inWishlist = () => wishlist.isInWishlist(product.currentProduct?.id)
 
@@ -96,7 +130,7 @@ async function addToCart() {
 
                         <div class="flex gap-3">
                             <ui-button :loading="adding" @click="addToCart" size="lg" class="flex-1">
-                                Add to Cart ÔÇö ${{ (product.currentProduct.price * qty).toFixed(2) }}
+                                Add to Cart — ${{ (product.currentProduct.price * qty).toFixed(2) }}
                             </ui-button>
                             <ui-button variant="outline" size="lg" @click="toggleWishlist">
                                 <svg class="h-5 w-5" :class="inWishlist() ? 'fill-error text-error' : ''" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
@@ -109,6 +143,37 @@ async function addToCart() {
                     <div v-else class="py-4 px-5 bg-slate-100 rounded-[16px] text-sm text-muted text-center">
                         This product is currently unavailable.
                     </div>
+                </div>
+            </div>
+
+            <div v-if="product.currentProduct" class="mt-16 border-t border-border/50 pt-10">
+                <div class="flex items-center gap-3 mb-8">
+                    <h2 class="text-2xl font-bold text-text">Reviews</h2>
+                    <span v-if="reviewPagination?.total"
+                        class="px-3 py-1 rounded-full bg-secondary text-sm font-medium text-text">
+                        {{ reviewPagination.total }}
+                    </span>
+                </div>
+
+                <div class="grid gap-10 lg:grid-cols-[1fr_400px]">
+                    <ReviewList :reviews="reviews" :loading="reviewsLoading" />
+
+                    <div v-if="auth.isAuthenticated">
+                        <ReviewForm v-if="product.currentProduct" :productId="product.currentProduct.id"
+                            @submitted="onReviewSubmitted" />
+                    </div>
+                    <div v-else class="rounded-[20px] border border-border/50 bg-white p-8 text-center">
+                        <p class="text-muted text-sm mb-4">Sign in to write a review</p>
+                        <ui-button to="/login" variant="primary" size="sm">Sign In</ui-button>
+                    </div>
+                </div>
+
+                <div v-if="reviewPagination && reviewPagination.lastPage > 1" class="mt-8 flex justify-center">
+                    <Pagination
+                        :currentPage="reviewPagination.currentPage"
+                        :lastPage="reviewPagination.lastPage"
+                        @page="fetchReviews"
+                    />
                 </div>
             </div>
         </div>
